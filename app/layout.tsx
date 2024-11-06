@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { ClerkProvider } from '@clerk/nextjs'
+
 import "./globals.css";
 import { Roboto } from 'next/font/google';
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+
 
 const roboto = Roboto({weight:'400', subsets:['latin']});
 
@@ -18,12 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <body className={roboto.className}>
-        Header or Navbar 
-       <main>{children}</main>
-      </body>
-    </html>
+      
+        <html lang="en">
+          <body className={roboto.className}>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </body>
+        </html>
+     
     </ClerkProvider>
   );
 }
