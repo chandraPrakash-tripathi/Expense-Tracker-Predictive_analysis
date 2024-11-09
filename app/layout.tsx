@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs'
-
+import {Providers} from '@/app/providers'
 import "./globals.css";
 import { Roboto } from 'next/font/google';
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import Layout from '@/components/layout/Design'
+import { Deserializer } from "node:v8";
+import Design from "@/components/layout/Design";
+import { connectToMongoDB } from "@/lib/mongodb";
 
 
 const roboto = Roboto({weight:'400', subsets:['latin']});
@@ -19,17 +20,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  connectToMongoDB()
   return (
-    <ClerkProvider>
+    
       
         <html lang="en">
           <body className={roboto.className}>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
+            <Providers>
+            <Design>{children}</Design>
+            </Providers>
           </body>
         </html>
      
-    </ClerkProvider>
+    
   );
 }

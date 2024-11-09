@@ -15,7 +15,7 @@ const Navbar = () => {
           </SignedIn>
         </div>
       </div>
-    </nav>
+    </nav> 
   );
 };
 
