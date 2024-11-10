@@ -1,42 +1,29 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { connectToMongoDB } from '@/lib/mongodb'; // Ensure this file establishes MongoDB connection
-import {Account} from '@/models/accountSchema'; // Use default import for the model
+import { connectToMongoDB } from '@/lib/mongodb';
+import { Account } from '@/models/accountSchema';
 
 export async function accountForm(formData: FormData) {
+  await connectToMongoDB(); // Ensure MongoDB connection is established
+
+  // Retrieve and parse the categories data from the formData
   const categoriesData = formData.get('categories');
   const categories = categoriesData ? JSON.parse(categoriesData as string) : [];
-  
+
   console.log("Received categories:", categories);
 
   try {
-    await connectToMongoDB();
-    console.log("Connected to MongoDB successfully");
+    // Create a new Account document with the categories
+    const newAccount = new Account({ categories });
+    
+    // Save the document to the database
+    await newAccount.save();
+    console.log("Categories saved to Account collection:", newAccount);
 
-    const savedCategories = [];
-    for (const category of categories) {
-      const existingCategory = await Account.findOne({ name: category.name }).lean();
-      if (!existingCategory) {
-        const newCategory = new Account({
-          name: category.name,
-          category: category.category || "default category", // Ensure category field is handled
-        });
-        const savedCategory = await newCategory.save();
-        savedCategories.push(savedCategory.toObject()); // Convert to plain object
-        console.log("Saved new category:", savedCategory);
-      } else {
-        savedCategories.push(existingCategory);  // Already a plain object
-        console.log("Category already exists:", existingCategory);
-      }
-    }
-
-    // Revalidate path to update client-side data if needed
-    revalidatePath('/your-path');
-
-    return { success: true, savedCategories };
+    // Optionally, revalidate the path if needed after saving
+    revalidatePath('/');
   } catch (error) {
-    console.error("Error in accountForm server action:", error);
-    return { success: false, message: "An error occurred while processing categories." };
+    console.error("Error saving categories to Account collection:", error);
   }
 }
