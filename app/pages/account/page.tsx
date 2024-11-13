@@ -1,4 +1,4 @@
-import AccountForm from "@/components/ui/AccountForm";
+import AccountForm from "@/components/ui/account/AccountForm";
 import { accountForm } from "@/actions/accountForm"
 import React from "react";
 

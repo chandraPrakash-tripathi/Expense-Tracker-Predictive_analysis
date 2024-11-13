@@ -9,10 +9,15 @@ export async function accountForm(formData: FormData) {
 
   // Retrieve and parse the categories data from the formData
   const categoriesData = formData.get('categories');
-  const categories = categoriesData ? JSON.parse(categoriesData as string) : [];
+  const categoriesName = categoriesData ? JSON.parse(categoriesData as string) : [];
 
-  console.log("Received categories:", categories);
+  console.log("Received categories:", categoriesName);
+  const categories = categoriesName.map((name: string, index: number) => ({
+    id: index + 1,  // Adjust the ID logic if necessary
+    name
+  }));
 
+  console.log("Formatted categories:", categories);
   try {
     // Create a new Account document with the categories
     const newAccount = new Account({ categories });
