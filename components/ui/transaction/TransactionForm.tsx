@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import AddTransactionCard from "./AddTransactionCard";
+import AddTransactionCard from "@/components/ui/transaction/AddTransactionCard";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
 import { CiSearch } from "react-icons/ci";
@@ -16,7 +16,6 @@ import {
 import { AppDispatch } from "@/app/redux/store";
 import { RootState } from "@/app/redux/store";
 import {
-  addTransaction,
   setSearchQuery,
   setCurrentPage,
   setRowsPerPage,
@@ -27,6 +26,8 @@ const TransactionForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { filteredTransactions, searchQuery, currentPage, rowsPerPage } =
     useSelector((state: RootState) => state.transactions);
+
+  const categories = useSelector((state: RootState) => state.expense.categories);
 
   useEffect(() => {
     dispatch(setRowsPerPage(5));
@@ -60,6 +61,8 @@ const TransactionForm = () => {
     }
   };
 
+  
+
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-lg max-w-5xl mx-auto">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-8">
@@ -71,7 +74,11 @@ const TransactionForm = () => {
             onChange={handleSearchChange}
             value={searchQuery}
           />
-          <Button variant="ghost" onClick={handleSearchClick} className="ml-2 p-2 rounded-md hover:bg-gray-200">
+          <Button
+            variant="ghost"
+            onClick={handleSearchClick}
+            className="ml-2 p-2 rounded-md hover:bg-gray-200"
+          >
             <CiSearch size={20} />
           </Button>
         </div>
@@ -80,7 +87,9 @@ const TransactionForm = () => {
 
       <div className="overflow-x-auto">
         <Table className="w-full bg-white shadow-md rounded-lg">
-          <TableCaption className="text-gray-500">A list of your recent transactions.</TableCaption>
+          <TableCaption className="text-gray-500">
+            A list of your recent transactions.
+          </TableCaption>
           <TableHeader>
             <TableRow className="bg-gray-50">
               <TableHead className="py-3">Transaction</TableHead>
@@ -89,20 +98,37 @@ const TransactionForm = () => {
               <TableHead>Type</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">Edit</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedTransactions.map((transaction, index) => (
               <TableRow key={index} className="hover:bg-gray-100">
-                <TableCell className="py-3 px-4 font-medium text-gray-700">{transaction.id}</TableCell>
-                <TableCell className="py-3 px-4 text-gray-600">{transaction.amount}</TableCell>
-                <TableCell className="py-3 px-4 text-gray-600">{transaction.description}</TableCell>
-                <TableCell className="py-3 px-4 text-gray-600">{transaction.type}</TableCell>
-                <TableCell className="py-3 px-4 text-gray-600">{transaction.category}</TableCell>
-                <TableCell className="py-3 px-4 text-gray-600">{transaction.date}</TableCell>
+                <TableCell className="py-3 px-4 font-medium text-gray-700">
+                  {transaction.id}
+                </TableCell>
+                <TableCell className="py-3 px-4 text-gray-600">
+                  {transaction.amount}
+                </TableCell>
+                <TableCell className="py-3 px-4 text-gray-600">
+                  {transaction.description}
+                </TableCell>
+                <TableCell className="py-3 px-4 text-gray-600">
+                  {transaction.type}
+                </TableCell>
+                <TableCell className="py-3 px-4 text-gray-600">
+                  {transaction.category}
+                </TableCell>
+                <TableCell className="py-3 px-4 text-gray-600">
+                  {transaction.date}
+                </TableCell>
                 <TableCell className="py-3 px-4 text-right">
-                  <Button variant="link" className="text-indigo-600 hover:text-indigo-800">Edit</Button>
+                  <Button
+                    variant="link"
+                    className="text-indigo-600 hover:text-indigo-800"
+                  >
+                    Edit
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -111,11 +137,19 @@ const TransactionForm = () => {
       </div>
 
       <div className="flex items-center justify-between mt-6">
-        <Button onClick={handlePreviousPage} disabled={currentPage === 1} className="bg-indigo-500 text-white px-4 py-2 rounded-md disabled:opacity-50">
+        <Button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className="bg-indigo-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
+        >
           &lt; Previous
         </Button>
         <span className="text-gray-600">Page {currentPage}</span>
-        <Button onClick={handleNextPage} disabled={startIndex + rowsPerPage >= filteredTransactions.length} className="bg-indigo-500 text-white px-4 py-2 rounded-md disabled:opacity-50">
+        <Button
+          onClick={handleNextPage}
+          disabled={startIndex + rowsPerPage >= filteredTransactions.length}
+          className="bg-indigo-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
+        >
           Next &gt;
         </Button>
       </div>

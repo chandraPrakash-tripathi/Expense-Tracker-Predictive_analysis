@@ -36,8 +36,9 @@ const initialState: TransactionsState = {
       setSearchQuery(state, action: PayloadAction<string>) {
         state.searchQuery = action.payload;
         state.filteredTransactions = state.transactions.filter((transaction) =>
-          transaction.description.toLowerCase().includes(state.searchQuery.toLowerCase())
+          transaction.category.toLowerCase().includes(action.payload.toLowerCase())
         );
+        state.currentPage = 1; // Reset to first page on new search
       },
       setCurrentPage(state, action: PayloadAction<number>) {
         state.currentPage = action.payload;
@@ -45,6 +46,16 @@ const initialState: TransactionsState = {
       setRowsPerPage(state, action: PayloadAction<number>) {
         state.rowsPerPage = action.payload;
       },
+      updateTransaction:(state,action:PayloadAction<Transaction>)=>{
+        const index = state.transactions.findIndex(t => t.id === action.payload.id);
+        if(index !==-1){
+          state.transactions[index] = action.payload
+          const filterIndex = state.filteredTransactions.findIndex(t=> t.id === action.payload.id)
+          if(filterIndex!==-1){
+            state.filteredTransactions[filterIndex] =action.payload
+          }
+        }
+      }
     },
   });
   
@@ -53,6 +64,7 @@ export const {
     setSearchQuery,
     setCurrentPage,
     setRowsPerPage,
+    updateTransaction
   } = transactionsSlice.actions;
   
   export default transactionsSlice.reducer;
