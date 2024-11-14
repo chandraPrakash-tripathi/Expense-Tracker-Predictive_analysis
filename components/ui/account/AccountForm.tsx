@@ -7,16 +7,16 @@ import { useDispatch,useSelector } from "react-redux";
 import { addCategory,removeCategory } from "@/app/redux/slices/expenseSlice";
 
 
-type Category = {
-  id: number;
-  name: string;
-};
+
 
 const AccountForm = ({
   accAction,
 }: {
   accAction: (formData: FormData) => void;
 }) => {
+
+
+
   const [categoryName, setCategoryName] = useState("");
   
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -61,6 +61,8 @@ const AccountForm = ({
     console.log("Form data prepared:", categories);
     accAction(formData);
   };
+
+  
 
   return (
     <form
