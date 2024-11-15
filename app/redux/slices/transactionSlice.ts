@@ -15,6 +15,7 @@ interface TransactionsState {
     searchQuery: string;
     currentPage: number;
     rowsPerPage: number;
+    
   }
 
 const initialState: TransactionsState = {
@@ -23,6 +24,8 @@ const initialState: TransactionsState = {
     searchQuery: '',
     currentPage: 1,
     rowsPerPage: 5,
+    
+    
   };
 
   const transactionsSlice = createSlice({
@@ -50,12 +53,23 @@ const initialState: TransactionsState = {
         const index = state.transactions.findIndex(t => t.id === action.payload.id);
         if(index !==-1){
           state.transactions[index] = action.payload
-          const filterIndex = state.filteredTransactions.findIndex(t=> t.id === action.payload.id)
-          if(filterIndex!==-1){
-            state.filteredTransactions[filterIndex] =action.payload
-          }
+          state.filteredTransactions = state.transactions.filter(transaction =>
+            transaction.category.toLowerCase().includes(state.searchQuery.toLowerCase())
+          );
         }
-      }
+      },
+      deleteTransaction: (state, action: PayloadAction<string>) => {
+        console.log("Reducer deleting ID:", action.payload); // Debugging line
+        state.transactions = state.transactions.filter(
+          (transaction) => transaction.id !== action.payload
+        );
+        state.filteredTransactions = state.filteredTransactions.filter(
+          (transaction) => transaction.id !== action.payload
+        );
+      },
+
+      
+      
     },
   });
   
@@ -64,7 +78,9 @@ export const {
     setSearchQuery,
     setCurrentPage,
     setRowsPerPage,
-    updateTransaction
+    updateTransaction,
+    deleteTransaction,
+    
   } = transactionsSlice.actions;
   
   export default transactionsSlice.reducer;

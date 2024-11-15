@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AddTransactionCard from "@/components/ui/transaction/AddTransactionCard";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
@@ -19,16 +19,18 @@ import {
   setSearchQuery,
   setCurrentPage,
   setRowsPerPage,
+  deleteTransaction,
 } from "@/app/redux/slices/transactionSlice";
 import { Button } from "../button";
+import { Transaction } from "@/lib/type";
 
 const TransactionForm = () => {
+  //1) App dispatch
   const dispatch = useDispatch<AppDispatch>();
+
+  //2) transactionSlice useSelector
   const { filteredTransactions, searchQuery, currentPage, rowsPerPage } =
     useSelector((state: RootState) => state.transactions);
-
-  const categories = useSelector((state: RootState) => state.expense.categories);
-
   useEffect(() => {
     dispatch(setRowsPerPage(5));
   }, [dispatch]);
@@ -41,7 +43,7 @@ const TransactionForm = () => {
     dispatch(setCurrentPage(1)); // Reset to first page on new search
   };
 
-  // Get paginated transactions for current page
+  // 3) Get paginated transactions for current page
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedTransactions = filteredTransactions.slice(
     startIndex,
@@ -60,9 +62,15 @@ const TransactionForm = () => {
       dispatch(setCurrentPage(currentPage + 1));
     }
   };
-
+  //4) delete transaction functionality
+  const handleDeleteTransaction = (transactionId: string) => {
+    console.log("Dispatching deleteTransaction with ID:", transactionId); // Debugging line
+    dispatch(deleteTransaction(transactionId));
+  };
+  
   
 
+  //Final:- HTML STRUCTURING
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-lg max-w-5xl mx-auto">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-8">
@@ -82,6 +90,7 @@ const TransactionForm = () => {
             <CiSearch size={20} />
           </Button>
         </div>
+
         <AddTransactionCard />
       </div>
 
@@ -98,7 +107,7 @@ const TransactionForm = () => {
               <TableHead>Type</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="text-right">Edit</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -123,12 +132,23 @@ const TransactionForm = () => {
                   {transaction.date}
                 </TableCell>
                 <TableCell className="py-3 px-4 text-right">
-                  <Button
-                    variant="link"
-                    className="text-indigo-600 hover:text-indigo-800"
-                  >
-                    Edit
-                  </Button>
+                  <div>
+                    <Button
+                      variant="link"
+                      className="text-indigo-600 hover:text-indigo-800"
+                      
+                     
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="link"
+                      className="text-indigo-600 hover:text-indigo-800"
+                      onClick={() => handleDeleteTransaction(transaction.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

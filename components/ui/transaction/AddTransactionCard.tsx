@@ -14,7 +14,8 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from "@/components/ui/button"
-
+import { Transaction } from '@/lib/type';
+import { closeEditTransaction,openEditTransaction } from '@/app/redux/slices/transactionSlice';
 
 const TransactionForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,6 +54,8 @@ const TransactionForm: React.FC = () => {
     });
     console.log(transaction);
   };
+
+  
 
   return (
     <Dialog>
@@ -145,7 +148,7 @@ const TransactionForm: React.FC = () => {
               id="date"
               name="date"
               value={transaction.date}
-              onChange={handleChange}
+        onChange={handleChange}
               required
               className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
             />
